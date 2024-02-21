@@ -11,6 +11,7 @@ from spacy.lang.pt.stop_words import STOP_WORDS
 base_dados = pd.read_csv(r'Train50.csv', encoding = 'utf-8', sep = ';')
 pontuacoes = string.punctuation
 stop_words = STOP_WORDS
+base_dados_final = []
 
 #pln = processamento de linguagem natural
 pln = spacy.load('pt_core_news_sm')
@@ -29,5 +30,12 @@ def preprocessamento(texto):
 
     return lista
 
-teste = preprocessamento('Estou aprendendo processamento de linguagem natural, curso em Curitiba')
-print(teste)
+base_dados['tweet_text'] = base_dados['tweet_text'].apply(preprocessamento)
+
+for texto, emocao in zip(base_dados['tweet_text'], base_dados['sentiment']):
+    if emocao == 1:
+        dic = ({'ALEGRIA':True, 'TRISTEZA':False})
+    elif emocao == 0:
+        dic = ({'ALEGRIA':False, 'TRISTEZA':True})
+    
+    base_dados_final.append([texto, dic.copy()])
